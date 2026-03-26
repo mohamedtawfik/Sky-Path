@@ -32,28 +32,27 @@ class AudioService {
 
   Future<void> playJumpSound() async {
     if (!_soundEnabled) return;
-    // In production, load from assets
-    // await _sfxPlayer.play(AssetSource('audio/jump.wav'));
+    await _sfxPlayer.play(AssetSource('audio/jump.wav'));
   }
 
   Future<void> playCoinSound() async {
     if (!_soundEnabled) return;
-    // await _sfxPlayer.play(AssetSource('audio/coin.wav'));
+    await _sfxPlayer.play(AssetSource('audio/coin.wav'));
   }
 
   Future<void> playLevelCompleteSound() async {
     if (!_soundEnabled) return;
-    // await _sfxPlayer.play(AssetSource('audio/level_complete.wav'));
+    await _sfxPlayer.play(AssetSource('audio/level_complete.wav'));
   }
 
   Future<void> playGameOverSound() async {
     if (!_soundEnabled) return;
-    // await _sfxPlayer.play(AssetSource('audio/game_over.wav'));
+    await _sfxPlayer.play(AssetSource('audio/game_over.wav'));
   }
 
   Future<void> playBackgroundMusic() async {
     if (!_musicEnabled) return;
-    // await _bgMusicPlayer.play(AssetSource('audio/bg_music.mp3'));
+    await _bgMusicPlayer.play(AssetSource('audio/bg_music.wav'));
   }
 
   Future<void> stopBackgroundMusic() async {

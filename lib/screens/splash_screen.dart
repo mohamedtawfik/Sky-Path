@@ -11,6 +11,7 @@ import '../providers/game_provider.dart';
 import '../utils/theme.dart';
 import 'home_screen.dart';
 import 'dart:io' show Platform;
+import 'package:package_info_plus/package_info_plus.dart';
 
 class SplashScreen extends StatefulWidget {
   final GameProvider gameProvider;
@@ -33,10 +34,12 @@ class _SplashScreenState extends State<SplashScreen>
   String _statusText = 'Loading...';
   bool _showForceUpdate = false;
   double _progress = 0.0;
+  String _appVersion = '';
 
   @override
   void initState() {
     super.initState();
+    _loadAppVersion();
 
     _logoController = AnimationController(
       duration: const Duration(milliseconds: 1200),
@@ -153,18 +156,34 @@ class _SplashScreenState extends State<SplashScreen>
     }
   }
 
+  Future<void> _loadAppVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    if (mounted) {
+      setState(() {
+        _appVersion = packageInfo.version;
+      });
+    }
+  }
+
   void _openStore() async {
     AnalyticsService().logForceUpdateClicked();
-    final String url;
+    String url;
     if (Platform.isIOS) {
-      url = 'https://apps.apple.com/app/idYOUR_APP_ID'; // Replace with real App Store URL
+      url = 'https://apps.apple.com/app/idYOUR_APP_ID';
     } else {
-      url = 'https://play.google.com/store/apps/details?id=com.tifasoft.skypath';
+      url = 'market://details?id=com.tifasoft.skypath';
     }
 
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    try {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } catch (e) {
+      if (!Platform.isIOS) {
+        // Fallback to web if market app is missing
+        url = 'https://play.google.com/store/apps/details?id=com.tifasoft.skypath';
+        try {
+          await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+        } catch (_) {}
+      }
     }
   }
 
@@ -289,7 +308,7 @@ class _SplashScreenState extends State<SplashScreen>
               left: 0,
               right: 0,
               child: Text(
-                'TifaSoft © 2026',
+                _appVersion.isEmpty ? 'TifaSoft' : 'TifaSoft v$_appVersion',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12,

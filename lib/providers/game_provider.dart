@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../services/storage_service.dart';
 import '../services/iap_service.dart';
+import '../services/audio_service.dart';
 import '../game/levels_data.dart';
 
 class GameProvider extends ChangeNotifier {
@@ -25,6 +26,9 @@ class GameProvider extends ChangeNotifier {
     _soundEnabled = _storage.isSoundEnabled();
     _musicEnabled = _storage.isMusicEnabled();
     _isPremium = _iapService.isPremiumUnlocked;
+
+    AudioService().setSoundEnabled(_soundEnabled);
+    AudioService().setMusicEnabled(_musicEnabled);
 
     _iapService.onPurchaseStatusChanged = (purchased) {
       _isPremium = purchased;
@@ -84,12 +88,19 @@ class GameProvider extends ChangeNotifier {
   Future<void> setSoundEnabled(bool enabled) async {
     _soundEnabled = enabled;
     await _storage.setSoundEnabled(enabled);
+    AudioService().setSoundEnabled(enabled);
     notifyListeners();
   }
 
   Future<void> setMusicEnabled(bool enabled) async {
     _musicEnabled = enabled;
     await _storage.setMusicEnabled(enabled);
+    AudioService().setMusicEnabled(enabled);
+    if (!enabled) {
+      AudioService().stopBackgroundMusic();
+    } else {
+      AudioService().playBackgroundMusic();
+    }
     notifyListeners();
   }
 }

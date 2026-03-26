@@ -443,7 +443,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen>
               ),
               const SizedBox(height: 12),
               Text(
-                'Get access to 7 amazing worlds with unique challenges, special platforms, and exclusive content!',
+                'Get access to the whole game! Unlock all premium levels with unique challenges, special platforms, and exclusive content!',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
@@ -454,7 +454,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen>
               const SizedBox(height: 8),
 
               // Features list
-              _buildFeatureRow('🏔️', '7 Premium Worlds'),
+              _buildFeatureRow('🏔️', 'All Premium Levels'),
               _buildFeatureRow('🌟', 'Special Platforms'),
               _buildFeatureRow('💎', 'Exclusive Rewards'),
               _buildFeatureRow('♾️', 'One-Time Purchase'),

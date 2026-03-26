@@ -34,6 +34,7 @@ class GameEngine {
     gameState.score = 0;
     gameState.coins = 0;
     gameState.maxHeight = 0;
+    gameState.timeElapsed = 0.0;
     cameraY = 0;
 
     // Reset player
@@ -51,18 +52,21 @@ class GameEngine {
   void _generatePlatforms() {
     platforms.clear();
 
-    // Add the starting platform (wide and centered)
+    double currentY = screenHeight - 50;
+
     platforms.add(Platform(
       x: screenWidth / 2 - 60,
-      y: screenHeight - 50,
+      y: currentY,
       width: 120,
       height: 15,
       type: PlatformType.normal,
     ));
 
-    double currentY = screenHeight - 120;
-    double minGap = 50;
-    double maxGap = 90;
+    double maxJumpHeight = (currentLevel.jumpForce * currentLevel.jumpForce) / (2 * currentLevel.gravity);
+    double minGap = maxJumpHeight * 0.4;
+    double maxGap = maxJumpHeight * 0.75;
+    if (minGap < 50) minGap = 50;
+    if (maxGap < 70) maxGap = 70;
 
     for (int i = 0; i < currentLevel.totalPlatforms; i++) {
       double gap = minGap + _random.nextDouble() * (maxGap - minGap);
@@ -85,11 +89,11 @@ class GameEngine {
       ));
     }
 
-    // Add a finish platform at the top
+    currentY -= 80;
     platforms.add(Platform(
-      x: screenWidth / 2 - 60,
-      y: currentY - 80,
-      width: 120,
+      x: 0,
+      y: currentY,
+      width: screenWidth,
       height: 20,
       type: PlatformType.normal,
     ));
@@ -127,6 +131,8 @@ class GameEngine {
 
   void update(double dt, double tilt) {
     if (gameState.status != GameStatus.playing) return;
+
+    gameState.timeElapsed += dt;
 
     // Apply horizontal movement from tilt/accelerometer
     player.velocityX = tilt * 400;
@@ -217,7 +223,7 @@ class GameEngine {
     }
 
     // Check level completion
-    if (gameState.score >= currentLevel.targetScore) {
+    if (player.y < platforms.last.y + 10) {
       gameState.status = GameStatus.levelComplete;
       onStatusChange?.call(GameStatus.levelComplete);
     }
@@ -311,10 +317,11 @@ class GameEngine {
   }
 
   int getStarsEarned() {
-    double percentage = gameState.score / currentLevel.targetScore;
-    if (percentage >= 1.0) return 3;
-    if (percentage >= 0.7) return 2;
-    if (percentage >= 0.4) return 1;
-    return 0;
+    double targetTime = currentLevel.totalPlatforms * 1.5;
+    
+    if (gameState.timeElapsed <= targetTime) return 3;
+    if (gameState.timeElapsed <= targetTime * 1.5) return 2;
+    if (gameState.timeElapsed <= targetTime * 2.0) return 1;
+    return 1;
   }
 }

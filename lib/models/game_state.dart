@@ -14,6 +14,7 @@ class GameState {
   int currentLevel;
   int lives;
   double maxHeight;
+  double timeElapsed;
 
   GameState({
     this.status = GameStatus.idle,
@@ -23,6 +24,7 @@ class GameState {
     this.currentLevel = 1,
     this.lives = 3,
     this.maxHeight = 0,
+    this.timeElapsed = 0.0,
   });
 
   void reset() {
@@ -31,5 +33,6 @@ class GameState {
     coins = 0;
     lives = 3;
     maxHeight = 0;
+    timeElapsed = 0.0;
   }
 }
