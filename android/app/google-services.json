@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "337802763546",
+    "project_id": "jumper-game-ea8ea",
+    "storage_bucket": "jumper-game-ea8ea.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:337802763546:android:c038cdf030a545480960a3",
+        "android_client_info": {
+          "package_name": "com.tifasoft.skypath"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwAnC_oENn41sPIPlC91Q297u7BOS3QXQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
