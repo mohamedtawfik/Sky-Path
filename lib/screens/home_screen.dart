@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../providers/game_provider.dart';
 import '../services/analytics_service.dart';
 import '../utils/theme.dart';
+import '../game/levels_data.dart';
 import 'level_select_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -204,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         const SizedBox(width: 16),
                         _buildSmallButton(
                           icon: Icons.leaderboard_rounded,
-                          onTap: () {},
+                          onTap: () => _showStats(context),
                         ),
                         const SizedBox(width: 16),
                         _buildSmallButton(
@@ -339,6 +340,76 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         child: Center(
           child: Icon(icon, color: AppTheme.textSecondary, size: 22),
         ),
+      ),
+    );
+  }
+
+  void _showStats(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: AppTheme.primaryMedium,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Padding(
+          padding: const EdgeInsets.all(28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Game Statistics',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 24),
+              _buildStatRow('🌟', 'Total Stars Earned', '${widget.gameProvider.totalStars}'),
+              const SizedBox(height: 12),
+              _buildStatRow('🪙', 'Total Coins Collected', '${widget.gameProvider.totalCoins}'),
+              const SizedBox(height: 12),
+              _buildStatRow('🏔️', 'Levels Completed', '${LevelsData.levels.where((l) => widget.gameProvider.isLevelCompleted(l.id)).length}'),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.accent,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: const Text('GOT IT', style: TextStyle(color: AppTheme.primaryDark, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatRow(String emoji, String label, String value) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: AppTheme.glassDecoration,
+      child: Row(
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 24)),
+          const SizedBox(width: 12),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
+          ),
+          const Spacer(),
+          Text(
+            value,
+            style: const TextStyle(
+              color: AppTheme.accent,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }
