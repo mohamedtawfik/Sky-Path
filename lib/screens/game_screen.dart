@@ -10,6 +10,7 @@ import '../services/analytics_service.dart';
 import '../services/audio_service.dart';
 import '../game/levels_data.dart';
 import '../utils/theme.dart';
+import 'package:jumper_game/l10n/app_localizations.dart';
 
 class GameScreen extends StatefulWidget {
   final GameLevel level;
@@ -133,6 +134,7 @@ class _GameScreenState extends State<GameScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (!_isGameReady) {
       return Scaffold(
         body: Container(
@@ -202,11 +204,11 @@ class _GameScreenState extends State<GameScreen>
                         children: [
                           Text(
                             '${_engine.gameState.score}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w800,
                               color: Colors.white,
-                              letterSpacing: 1,
+                              letterSpacing: Localizations.localeOf(context).languageCode == 'ar' ? 0 : 1,
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -329,6 +331,7 @@ class _GameScreenState extends State<GameScreen>
   }
 
   void _showPauseDialog() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -340,26 +343,26 @@ class _GameScreenState extends State<GameScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'PAUSED',
+              Text(
+                l10n.pause.toUpperCase(),
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
                   color: Colors.white,
-                  letterSpacing: 4,
+                  letterSpacing: Localizations.localeOf(context).languageCode == 'ar' ? 0 : 4,
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                widget.level.name,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppTheme.textSecondary.withValues(alpha: 0.7),
-                ),
-              ),
+                    Text(
+                      _getLevelName(context, widget.level),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppTheme.textSecondary.withValues(alpha: 0.7),
+                      ),
+                    ),
               const SizedBox(height: 32),
               _buildDialogButton(
-                label: 'RESUME',
+                label: l10n.resume.toUpperCase(),
                 gradient: AppTheme.accentGradient,
                 textColor: AppTheme.primaryDark,
                 onTap: () {
@@ -372,7 +375,7 @@ class _GameScreenState extends State<GameScreen>
               ),
               const SizedBox(height: 12),
               _buildDialogButton(
-                label: 'RESTART',
+                label: l10n.restart.toUpperCase(),
                 gradient: null,
                 textColor: Colors.white,
                 borderColor: Colors.white.withValues(alpha: 0.2),
@@ -386,7 +389,7 @@ class _GameScreenState extends State<GameScreen>
               ),
               const SizedBox(height: 12),
               _buildDialogButton(
-                label: 'QUIT',
+                label: l10n.quit.toUpperCase(),
                 gradient: null,
                 textColor: AppTheme.danger,
                 borderColor: AppTheme.danger.withValues(alpha: 0.3),
@@ -403,6 +406,7 @@ class _GameScreenState extends State<GameScreen>
   }
 
   Widget _buildGameOverOverlay() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       color: Colors.black.withValues(alpha: 0.7),
       child: Center(
@@ -424,23 +428,23 @@ class _GameScreenState extends State<GameScreen>
                 style: TextStyle(fontSize: 48),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'GAME OVER',
+              Text(
+                l10n.gameOver.toUpperCase(),
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
                   color: AppTheme.danger,
-                  letterSpacing: 4,
+                  letterSpacing: Localizations.localeOf(context).languageCode == 'ar' ? 0 : 4,
                 ),
               ),
               const SizedBox(height: 20),
-              _buildStatRow('Score', '${_engine.gameState.score}'),
-              _buildStatRow('Coins', '${_engine.gameState.coins}'),
+              _buildStatRow(l10n.score, '${_engine.gameState.score}'),
+              _buildStatRow(l10n.coins, '${_engine.gameState.coins}'),
               _buildStatRow(
-                  'Height', '${_engine.gameState.maxHeight.toInt()}m'),
+                  l10n.height, '${_engine.gameState.maxHeight.toInt()}m'),
               const SizedBox(height: 28),
               _buildDialogButton(
-                label: 'TRY AGAIN',
+                label: l10n.tryAgain.toUpperCase(),
                 gradient: AppTheme.accentGradient,
                 textColor: AppTheme.primaryDark,
                 onTap: () {
@@ -453,7 +457,7 @@ class _GameScreenState extends State<GameScreen>
               ),
               const SizedBox(height: 12),
               _buildDialogButton(
-                label: 'BACK TO LEVELS',
+                label: l10n.backToHome.toUpperCase(),
                 gradient: null,
                 textColor: Colors.white,
                 borderColor: Colors.white.withValues(alpha: 0.2),
@@ -468,6 +472,7 @@ class _GameScreenState extends State<GameScreen>
 
   Widget _buildLevelCompleteOverlay() {
     final stars = _engine.getStarsEarned();
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       color: Colors.black.withValues(alpha: 0.7),
@@ -493,9 +498,9 @@ class _GameScreenState extends State<GameScreen>
               ShaderMask(
                 shaderCallback: (bounds) =>
                     AppTheme.accentGradient.createShader(bounds),
-                child: const Text(
-                  'LEVEL COMPLETE!',
-                  style: TextStyle(
+                child: Text(
+                  l10n.levelComplete.toUpperCase(),
+                  style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w800,
                     color: Colors.white,
@@ -535,14 +540,14 @@ class _GameScreenState extends State<GameScreen>
               ),
 
               const SizedBox(height: 20),
-              _buildStatRow('Score', '${_engine.gameState.score}'),
-              _buildStatRow('Coins', '${_engine.gameState.coins}'),
+              _buildStatRow(l10n.score, '${_engine.gameState.score}'),
+              _buildStatRow(l10n.coins, '${_engine.gameState.coins}'),
               const SizedBox(height: 28),
 
               // Next level button
               if (widget.level.id < 10)
                 _buildDialogButton(
-                  label: 'NEXT LEVEL',
+                  label: l10n.nextLevel.toUpperCase(),
                   gradient: AppTheme.accentGradient,
                   textColor: AppTheme.primaryDark,
                   onTap: () {
@@ -568,7 +573,7 @@ class _GameScreenState extends State<GameScreen>
               if (widget.level.id < 10) const SizedBox(height: 12),
 
               _buildDialogButton(
-                label: 'BACK TO LEVELS',
+                label: l10n.backToHome.toUpperCase(),
                 gradient: null,
                 textColor: Colors.white,
                 borderColor: Colors.white.withValues(alpha: 0.2),
@@ -639,6 +644,22 @@ class _GameScreenState extends State<GameScreen>
         ),
       ),
     );
+  }
+  String _getLevelName(BuildContext context, GameLevel level) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (level.id) {
+      case 1: return l10n.level1Name;
+      case 2: return l10n.level2Name;
+      case 3: return l10n.level3Name;
+      case 4: return l10n.level4Name;
+      case 5: return l10n.level5Name;
+      case 6: return l10n.level6Name;
+      case 7: return l10n.level7Name;
+      case 8: return l10n.level8Name;
+      case 9: return l10n.level9Name;
+      case 10: return l10n.level10Name;
+      default: return level.name;
+    }
   }
 }
 

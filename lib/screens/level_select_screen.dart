@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:jumper_game/l10n/app_localizations.dart';
 import '../providers/game_provider.dart';
 import '../game/levels_data.dart';
 import '../models/level.dart';
@@ -50,6 +51,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(gradient: AppTheme.primaryGradient),
@@ -91,15 +93,15 @@ class _LevelSelectScreenState extends State<LevelSelectScreen>
                             ),
                           ),
                         ),
-                        const Expanded(
+                        Expanded(
                           child: Text(
-                            'SELECT LEVEL',
+                            l10n.level.toUpperCase(),
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w800,
                               color: Colors.white,
-                              letterSpacing: 3,
+                              letterSpacing: Localizations.localeOf(context).languageCode == 'ar' ? 0 : 3,
                             ),
                           ),
                         ),
@@ -183,6 +185,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen>
   }
 
   Widget _buildLevelCard(GameLevel level, int index) {
+    final l10n = AppLocalizations.of(context)!;
     final isUnlocked = widget.gameProvider.isLevelUnlocked(level.id);
     final isCompleted = widget.gameProvider.isLevelCompleted(level.id);
     final stars = widget.gameProvider.getLevelStars(level.id);
@@ -275,7 +278,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen>
                       children: [
                         Expanded(
                           child: Text(
-                            level.name,
+                            _getLevelName(context, level),
                             style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.w700,
@@ -293,9 +296,9 @@ class _LevelSelectScreenState extends State<LevelSelectScreen>
                               gradient: AppTheme.premiumGradient,
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Text(
-                              'PRO',
-                              style: TextStyle(
+                            child: Text(
+                              l10n.premiumTag,
+                              style: const TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w800,
                                 color: Colors.white,
@@ -307,7 +310,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      level.description,
+                      _getLevelDesc(context, level),
                       style: TextStyle(
                         fontSize: 12,
                         color: isUnlocked
@@ -338,7 +341,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen>
                           ),
                           const SizedBox(width: 12),
                           Text(
-                            'Best: $highScore',
+                            '${l10n.best}: $highScore',
                             style: TextStyle(
                               fontSize: 11,
                               color: AppTheme.textMuted.withValues(alpha: 0.7),
@@ -393,7 +396,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen>
   void _showLockedMessage() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Complete the previous level first!'),
+        content: Text(AppLocalizations.of(context)!.lockedMessage),
         backgroundColor: AppTheme.primaryLight,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -402,6 +405,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen>
   }
 
   void _showPurchaseDialog() {
+    final l10n = AppLocalizations.of(context)!;
     _analytics.logPurchasePromptShown();
     showDialog(
       context: context,
@@ -433,9 +437,9 @@ class _LevelSelectScreenState extends State<LevelSelectScreen>
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
-                'Unlock Premium Levels',
-                style: TextStyle(
+              Text(
+                l10n.unlockTitle,
+                style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
                   color: Colors.white,
@@ -443,7 +447,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen>
               ),
               const SizedBox(height: 12),
               Text(
-                'Get access to the whole game! Unlock all premium levels with unique challenges, special platforms, and exclusive content!',
+                l10n.unlockDescription,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
@@ -454,10 +458,10 @@ class _LevelSelectScreenState extends State<LevelSelectScreen>
               const SizedBox(height: 8),
 
               // Features list
-              _buildFeatureRow('🏔️', 'All Premium Levels'),
-              _buildFeatureRow('🌟', 'Special Platforms'),
-              _buildFeatureRow('💎', 'Exclusive Rewards'),
-              _buildFeatureRow('♾️', 'One-Time Purchase'),
+              _buildFeatureRow('🏔️', l10n.featureAllLevels),
+              _buildFeatureRow('🌟', l10n.featurePlatforms),
+              _buildFeatureRow('💎', l10n.featureRewards),
+              _buildFeatureRow('♾️', l10n.featureOneTime),
 
               const SizedBox(height: 24),
 
@@ -487,9 +491,9 @@ class _LevelSelectScreenState extends State<LevelSelectScreen>
                     child: Container(
                       alignment: Alignment.center,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: const Text(
-                        'UNLOCK NOW',
-                        style: TextStyle(
+                      child: Text(
+                        l10n.unlockNow,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
@@ -506,7 +510,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen>
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: Text(
-                  'Maybe Later',
+                  l10n.later,
                   style: TextStyle(
                     color: AppTheme.textMuted.withValues(alpha: 0.6),
                     fontSize: 14,
@@ -538,6 +542,39 @@ class _LevelSelectScreenState extends State<LevelSelectScreen>
         ],
       ),
     );
+  }
+  String _getLevelName(BuildContext context, GameLevel level) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (level.id) {
+      case 1: return l10n.level1Name;
+      case 2: return l10n.level2Name;
+      case 3: return l10n.level3Name;
+      case 4: return l10n.level4Name;
+      case 5: return l10n.level5Name;
+      case 6: return l10n.level6Name;
+      case 7: return l10n.level7Name;
+      case 8: return l10n.level8Name;
+      case 9: return l10n.level9Name;
+      case 10: return l10n.level10Name;
+      default: return level.name;
+    }
+  }
+
+  String _getLevelDesc(BuildContext context, GameLevel level) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (level.id) {
+      case 1: return l10n.level1Desc;
+      case 2: return l10n.level2Desc;
+      case 3: return l10n.level3Desc;
+      case 4: return l10n.level4Desc;
+      case 5: return l10n.level5Desc;
+      case 6: return l10n.level6Desc;
+      case 7: return l10n.level7Desc;
+      case 8: return l10n.level8Desc;
+      case 9: return l10n.level9Desc;
+      case 10: return l10n.level10Desc;
+      default: return level.description;
+    }
   }
 }
 

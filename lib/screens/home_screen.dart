@@ -1,5 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:jumper_game/l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 import '../providers/game_provider.dart';
 import '../services/analytics_service.dart';
 import '../utils/theme.dart';
@@ -61,7 +63,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) {
+    Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(gradient: AppTheme.primaryGradient),
@@ -126,9 +129,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     ShaderMask(
                       shaderCallback: (bounds) =>
                           AppTheme.accentGradient.createShader(bounds),
-                      child: const Text(
-                        'SKY PATH',
-                        style: TextStyle(
+                      child: Text(
+                        l10n.appTitle,
+                        style: const TextStyle(
                           fontSize: 48,
                           fontWeight: FontWeight.w900,
                           color: Colors.white,
@@ -141,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     const SizedBox(height: 4),
 
                     Text(
-                      'REACH THE SKY',
+                      l10n.appSubtitle,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -172,13 +175,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 _buildStatBadge(
                                   '⭐',
                                   '${widget.gameProvider.totalStars}',
-                                  'Stars',
+                                  l10n.stars,
                                 ),
                                 const SizedBox(width: 24),
                                 _buildStatBadge(
                                   '🪙',
                                   '${widget.gameProvider.totalCoins}',
-                                  'Coins',
+                                  l10n.coins,
                                 ),
                               ],
                             );
@@ -190,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     const SizedBox(height: 40),
 
                     // Play button
-                    _buildPlayButton(),
+                    _buildPlayButton(l10n),
 
                     const SizedBox(height: 16),
 
@@ -206,11 +209,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         _buildSmallButton(
                           icon: Icons.leaderboard_rounded,
                           onTap: () => _showStats(context),
-                        ),
-                        const SizedBox(width: 16),
-                        _buildSmallButton(
-                          icon: Icons.info_outline_rounded,
-                          onTap: () => _showAbout(context),
                         ),
                       ],
                     ),
@@ -261,7 +259,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildPlayButton() {
+  Widget _buildPlayButton(AppLocalizations l10n) {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -300,18 +298,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ),
           ],
         ),
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.play_arrow_rounded, size: 28, color: AppTheme.primaryDark),
-            SizedBox(width: 8),
+            const Icon(Icons.play_arrow_rounded,
+                size: 28, color: AppTheme.primaryDark),
+            const SizedBox(width: 8),
             Text(
-              'PLAY',
+              l10n.play,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
                 color: AppTheme.primaryDark,
-                letterSpacing: 4,
+                letterSpacing: Localizations.localeOf(context).languageCode == 'ar' ? 0 : 4,
               ),
             ),
           ],
@@ -345,6 +344,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void _showStats(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -355,20 +355,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Game Statistics',
-                style: TextStyle(
+                Text(
+                l10n.gameStatistics,
+                style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
                   color: Colors.white,
                 ),
               ),
               const SizedBox(height: 24),
-              _buildStatRow('🌟', 'Total Stars Earned', '${widget.gameProvider.totalStars}'),
+              _buildStatRow('🌟', l10n.totalStarsEarned, '${widget.gameProvider.totalStars}'),
               const SizedBox(height: 12),
-              _buildStatRow('🪙', 'Total Coins Collected', '${widget.gameProvider.totalCoins}'),
+              _buildStatRow('🪙', l10n.totalCoinsCollected, '${widget.gameProvider.totalCoins}'),
               const SizedBox(height: 12),
-              _buildStatRow('🏔️', 'Levels Completed', '${LevelsData.levels.where((l) => widget.gameProvider.isLevelCompleted(l.id)).length}'),
+              _buildStatRow('🏔️', l10n.levelsCompleted, '${LevelsData.levels.where((l) => widget.gameProvider.isLevelCompleted(l.id)).length}'),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
@@ -378,7 +378,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     backgroundColor: AppTheme.accent,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
-                  child: const Text('GOT IT', style: TextStyle(color: AppTheme.primaryDark, fontWeight: FontWeight.bold)),
+                  child: Text(l10n.gotIt, style: const TextStyle(color: AppTheme.primaryDark, fontWeight: FontWeight.bold)),
                 ),
               ),
             ],
@@ -418,16 +418,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: AppTheme.primaryMedium,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.1),
-            width: 1,
-          ),
-        ),
+      isScrollControlled: true,
+      builder: (context) => Consumer<GameProvider>(
+        builder: (context, provider, _) {
+          final l10n = AppLocalizations.of(context)!;
+          return Container(
+            padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryMedium,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.1),
+                width: 1,
+              ),
+            ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -440,9 +444,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
-              'Settings',
-              style: TextStyle(
+            Text(
+              l10n.settings,
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
@@ -455,14 +459,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 return Column(
                   children: [
                     _buildSettingToggle(
-                      'Sound Effects',
+                      l10n.soundEffects,
                       Icons.volume_up_rounded,
                       widget.gameProvider.soundEnabled,
                       (v) => widget.gameProvider.setSoundEnabled(v),
                     ),
                     const SizedBox(height: 12),
                     _buildSettingToggle(
-                      'Music',
+                      l10n.music,
                       Icons.music_note_rounded,
                       widget.gameProvider.musicEnabled,
                       (v) => widget.gameProvider.setMusicEnabled(v),
@@ -472,6 +476,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               },
             ),
             const SizedBox(height: 20),
+            _buildLanguageSelector(context),
+            const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: TextButton(
@@ -480,7 +486,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: const Text('Restoring purchases...'),
+                      content: Text(l10n.restorePurchases),
                       backgroundColor: AppTheme.primaryLight,
                       behavior: SnackBarBehavior.floating,
                       shape: RoundedRectangleBorder(
@@ -489,9 +495,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     ),
                   );
                 },
-                child: const Text(
-                  'Restore Purchases',
-                  style: TextStyle(
+                child: Text(
+                  l10n.restorePurchases,
+                  style: const TextStyle(
                     color: AppTheme.accent,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -499,9 +505,83 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ),
               ),
             ),
-            const SizedBox(height: 8),
-          ],
-        ),
+            ],
+          ),
+        );
+      },
+    ),
+  );
+}
+
+  Widget _buildLanguageSelector(BuildContext context) {
+    final provider = widget.gameProvider;
+    final currentLang = provider.currentLocale?.languageCode ?? 
+        Localizations.localeOf(context).languageCode;
+
+    final languages = [
+      {'code': 'en', 'name': 'EN'},
+      {'code': 'ar', 'name': 'AR'},
+      {'code': 'fr', 'name': 'FR'},
+      {'code': 'es', 'name': 'ES'},
+      {'code': 'de', 'name': 'DE'},
+    ];
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: AppTheme.glassDecoration,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.language_rounded, color: AppTheme.accent, size: 20),
+              const SizedBox(width: 10),
+              Text(
+                AppLocalizations.of(context)!.language,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: languages.map((lang) {
+              final isSelected = currentLang == lang['code'];
+              return GestureDetector(
+                onTap: () => provider.setLocale(lang['code']!),
+                child: Container(
+                  width: 48,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: isSelected 
+                        ? AppTheme.accent.withValues(alpha: 0.2)
+                        : Colors.white.withValues(alpha: 0.05),
+                    border: Border.all(
+                      color: isSelected 
+                          ? AppTheme.accent 
+                          : Colors.white.withValues(alpha: 0.1),
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      lang['name']!,
+                      style: TextStyle(
+                        color: isSelected ? AppTheme.accent : Colors.white70,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
       ),
     );
   }
@@ -538,6 +618,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void _showAbout(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -579,7 +660,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ),
               const SizedBox(height: 16),
               Text(
-                'Jump through exciting levels, collect stars,\nand reach the sky in premium worlds!',
+                l10n.aboutDescription,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
@@ -589,7 +670,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ),
               const SizedBox(height: 20),
               Text(
-                'Made with ❤️ by TifaSoft',
+                l10n.madeWith,
                 style: TextStyle(
                   fontSize: 12,
                   color: AppTheme.textMuted.withValues(alpha: 0.6),

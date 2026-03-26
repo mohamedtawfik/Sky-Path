@@ -12,6 +12,7 @@ import '../utils/theme.dart';
 import 'home_screen.dart';
 import 'dart:io' show Platform;
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:jumper_game/l10n/app_localizations.dart';
 
 class SplashScreen extends StatefulWidget {
   final GameProvider gameProvider;
@@ -77,9 +78,13 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _initializeApp() async {
     try {
+      // Wait for at least one frame to ensure context has AppLocalizations
+      await Future.delayed(Duration.zero);
+      if (!mounted) return;
+
       // Step 1: Initialize storage
       setState(() {
-        _statusText = 'Initializing...';
+        _statusText = AppLocalizations.of(context)?.initializing ?? 'Initializing...';
         _progress = 0.1;
       });
       await StorageService().initialize();
@@ -87,7 +92,7 @@ class _SplashScreenState extends State<SplashScreen>
 
       // Step 2: Initialize Firebase services
       setState(() {
-        _statusText = 'Connecting to services...';
+        _statusText = AppLocalizations.of(context)?.connecting ?? 'Connecting...';
         _progress = 0.3;
       });
       await FirebaseService().initialize();
@@ -95,7 +100,7 @@ class _SplashScreenState extends State<SplashScreen>
 
       // Step 3: Check force update
       setState(() {
-        _statusText = 'Checking for updates...';
+        _statusText = AppLocalizations.of(context)?.checkingUpdates ?? 'Checking updates...';
         _progress = 0.5;
       });
       bool needsUpdate = await FirebaseService().isForceUpdateRequired();
@@ -111,7 +116,7 @@ class _SplashScreenState extends State<SplashScreen>
 
       // Step 4: Initialize IAP
       setState(() {
-        _statusText = 'Loading store...';
+        _statusText = AppLocalizations.of(context)?.loadingStore ?? 'Loading store...';
         _progress = 0.7;
       });
       await IAPService().initialize();
@@ -119,14 +124,14 @@ class _SplashScreenState extends State<SplashScreen>
 
       // Step 5: Initialize audio
       setState(() {
-        _statusText = 'Preparing audio...';
+        _statusText = AppLocalizations.of(context)?.preparingAudio ?? 'Preparing audio...';
         _progress = 0.85;
       });
       await AudioService().initialize();
 
       // Step 6: Initialize game provider
       setState(() {
-        _statusText = 'Ready!';
+        _statusText = AppLocalizations.of(context)?.ready ?? 'Ready!';
         _progress = 1.0;
       });
       await widget.gameProvider.initialize();
@@ -268,9 +273,9 @@ class _SplashScreenState extends State<SplashScreen>
                   ShaderMask(
                     shaderCallback: (bounds) =>
                         AppTheme.accentGradient.createShader(bounds),
-                    child: const Text(
-                      'SKY PATH',
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalizations.of(context)!.appTitle,
+                      style: const TextStyle(
                         fontSize: 44,
                         fontWeight: FontWeight.w900,
                         color: Colors.white,
@@ -282,7 +287,7 @@ class _SplashScreenState extends State<SplashScreen>
                   const SizedBox(height: 8),
 
                   Text(
-                    'REACH THE SKY',
+                    AppLocalizations.of(context)!.appSubtitle,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -384,30 +389,30 @@ class _SplashScreenState extends State<SplashScreen>
       ),
       child: Column(
         children: [
-          const Icon(
-            Icons.system_update_rounded,
-            size: 48,
-            color: AppTheme.danger,
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Update Required',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
+            Icon(
+              Icons.system_update_rounded,
+              size: 48,
+              color: AppTheme.danger,
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'A new version of Sky Path is available.\nPlease update to continue playing.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              color: AppTheme.textSecondary.withValues(alpha: 0.8),
-              height: 1.5,
+            const SizedBox(height: 16),
+            Text(
+              AppLocalizations.of(context)!.updateRequired,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
             ),
-          ),
+            const SizedBox(height: 8),
+            Text(
+              AppLocalizations.of(context)!.updateDescription,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: AppTheme.textSecondary.withValues(alpha: 0.8),
+                height: 1.5,
+              ),
+            ),
           const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
@@ -422,9 +427,9 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 elevation: 0,
               ),
-              child: const Text(
-                'UPDATE NOW',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.updateNow,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.5,

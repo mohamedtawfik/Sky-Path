@@ -95,4 +95,13 @@ class StorageService {
   Future<void> setFirstLaunchDone() async {
     await _prefs.setBool('first_launch', false);
   }
+
+  // Locale settings
+  Future<void> setLocale(String languageCode) async {
+    await _prefs.setString('language_code', languageCode);
+  }
+
+  String? getLocale() {
+    return _prefs.getString('language_code');
+  }
 }

@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:jumper_game/l10n/app_localizations.dart';
 import 'providers/game_provider.dart';
 import 'screens/splash_screen.dart';
 import 'services/analytics_service.dart';
@@ -58,20 +60,27 @@ class SkyPathApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Sky Path',
-      debugShowCheckedModeBanner: false,
-      navigatorObservers: [AnalyticsService().observer],
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF00F5D4),
-          brightness: Brightness.dark,
-        ),
-        scaffoldBackgroundColor: const Color(0xFF0D1B2A),
-        fontFamily: 'Roboto',
-        useMaterial3: true,
-      ),
-      home: SplashScreen(gameProvider: gameProvider),
+    return Consumer<GameProvider>(
+      builder: (context, provider, child) {
+        return MaterialApp(
+          title: 'Sky Path',
+          debugShowCheckedModeBanner: false,
+          navigatorObservers: [AnalyticsService().observer],
+          locale: provider.currentLocale,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFF00F5D4),
+              brightness: Brightness.dark,
+            ),
+            scaffoldBackgroundColor: const Color(0xFF0D1B2A),
+            fontFamily: 'Roboto',
+            useMaterial3: true,
+          ),
+          home: SplashScreen(gameProvider: provider),
+        );
+      },
     );
   }
 }

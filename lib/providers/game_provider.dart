@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import '../services/storage_service.dart';
 import '../services/iap_service.dart';
@@ -13,12 +14,14 @@ class GameProvider extends ChangeNotifier {
   int _totalCoins = 0;
   bool _soundEnabled = true;
   bool _musicEnabled = true;
+  Locale? _currentLocale;
 
   bool get isPremium => _isPremium;
   int get totalStars => _totalStars;
   int get totalCoins => _totalCoins;
   bool get soundEnabled => _soundEnabled;
   bool get musicEnabled => _musicEnabled;
+  Locale? get currentLocale => _currentLocale;
 
   Future<void> initialize() async {
     _totalStars = _storage.getTotalStars();
@@ -26,6 +29,11 @@ class GameProvider extends ChangeNotifier {
     _soundEnabled = _storage.isSoundEnabled();
     _musicEnabled = _storage.isMusicEnabled();
     _isPremium = _iapService.isPremiumUnlocked;
+    
+    final savedLocale = _storage.getLocale();
+    if (savedLocale != null) {
+      _currentLocale = Locale(savedLocale);
+    }
 
     AudioService().setSoundEnabled(_soundEnabled);
     AudioService().setMusicEnabled(_musicEnabled);
@@ -101,6 +109,12 @@ class GameProvider extends ChangeNotifier {
     } else {
       AudioService().playBackgroundMusic();
     }
+    notifyListeners();
+  }
+
+  Future<void> setLocale(String languageCode) async {
+    _currentLocale = Locale(languageCode);
+    await _storage.setLocale(languageCode);
     notifyListeners();
   }
 }
